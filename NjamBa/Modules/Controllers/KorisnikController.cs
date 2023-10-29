@@ -17,6 +17,8 @@ namespace NjamBa.Modules.Controllers
         public KorisnikController(ApplicationDbContext applicationDbContext)
         {
                 this._dbContext = applicationDbContext; 
+
+            //KONJINAAAAAAAAAAAAAA
         }
 
         [HttpPost]
