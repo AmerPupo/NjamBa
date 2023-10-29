@@ -15,6 +15,8 @@ namespace NjamBa.Data.Models
         public string Adresa { get; set; }
         public int KazneniBodovi { get; set; }
         public int NagradniBodovi { get; set; }
+
+        public int NagradniBodovi { get; set; }
         
     }
 }

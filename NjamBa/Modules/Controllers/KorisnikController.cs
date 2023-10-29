@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NjamBa.Data;
 using NjamBa.Data.Models;
+using System;
+    using NjamBa.Modules.ViewModels;
 
 namespace NjamBa.Modules.Controllers
 {
@@ -10,15 +13,34 @@ namespace NjamBa.Modules.Controllers
     public class KorisnikController : ControllerBase
     {
 
-        private readonly ApplicationDbContext _dbcontext; 
+        private readonly ApplicationDbContext _dbContext; 
         public KorisnikController(ApplicationDbContext applicationDbContext)
         {
-                this._dbcontext = applicationDbContext; 
+                this._dbContext = applicationDbContext; 
         }
 
         [HttpPost]
 
-        public Korisnik RegistracijaKorisnika( )
+        public Korisnik RegistracijaKorisnika([FromBody] KorisnikRegistracijaVM x)
+        {
+            Korisnik? objekat;
+
+            if (x.KorisnikId == 0)
+            {
+                objekat = new Korisnik();
+                _dbContext.Add(objekat);//priprema sql
+            }
+            else
+            {
+                objekat = _dbContext.Korisnik.Find(x.KorisnikId);
+            }
+
+            objekat.Ime = x.Ime;
+            objekat.Prezime = x.Prezime;
+
+            _dbContext.SaveChanges();
+            return objekat;
+        }
 
 
 
