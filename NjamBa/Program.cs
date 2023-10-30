@@ -6,6 +6,7 @@ using Microsoft.Identity.Web;
 
 using Microsoft.Extensions.Configuration;
 
+
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", false)
     .Build();
@@ -26,7 +27,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        options.RoutePrefix = string.Empty;
+    });
 }
 
 app.UseDefaultFiles();

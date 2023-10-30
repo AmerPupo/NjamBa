@@ -5,6 +5,7 @@ using NjamBa.Data;
 using NjamBa.Data.Models;
 using System;
     using NjamBa.Modules.ViewModels;
+using System.Security.Cryptography;
 
 namespace NjamBa.Modules.Controllers
 {
@@ -18,30 +19,44 @@ namespace NjamBa.Modules.Controllers
         {
                 this._dbContext = applicationDbContext; 
 
-            //KONJINAAAAAAAAAAAAAA
         }
-        //Ovo je testiranje
-        [HttpPost]
+        [HttpPost("KorisnikRegistracija")]
 
-        public Korisnik RegistracijaKorisnika([FromBody] KorisnikRegistracijaVM x)
+        public async Task<IActionResult> RegistracijaKorisnika([FromBody] KorisnikRegistracijaVM x)
         {
-            Korisnik? objekat;
-
-            if (x.KorisnikId == 0)
+           if(_dbContext.Korisnik.Any(u => u.Email == x.Email))
             {
-                objekat = new Korisnik();
+                return BadRequest("Email vec u upotrebi.");
+            }
+
+
+            var objekat = new Korisnik
+            {
+
+                Ime = x.Ime,
+                Prezime = x.Prezime,
+                Adresa = x.Adresa,
+                DatumRodjenja = x.DatumRodjenja,
+                BrojTelefona = x.BrojTelefona,
+                Email = x.Email,
+                HashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(x.Password, 13),
+                KazneniBodovi = 0,
+                NagradniBodovi = 0,
+                VerifikacijskiToken = CreateRandomToken(),
+
+            };
+            if (BCrypt.Net.BCrypt.EnhancedVerify(x.ConfirmPassword, objekat.HashedPassword))
                 _dbContext.Add(objekat);//priprema sql
-            }
             else
-            {
-                objekat = _dbContext.Korisnik.Find(x.KorisnikId);
-            }
+                return BadRequest("Sifre se ne podudaraju.");
 
-            objekat.Ime = x.Ime;
-            objekat.Prezime = x.Prezime;
 
-            _dbContext.SaveChanges();
-            return objekat;
+           await _dbContext.SaveChangesAsync();
+            return Ok("Korisnik uspjesno registrovan");
+        }
+        private string CreateRandomToken()
+        {
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }
 
 
