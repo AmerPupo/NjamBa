@@ -20,7 +20,7 @@ namespace NjamBa.Modules.Controllers
 
             //KONJINAAAAAAAAAAAAAA
         }
-
+        //Ovo je testiranje
         [HttpPost]
 
         public Korisnik RegistracijaKorisnika([FromBody] KorisnikRegistracijaVM x)
